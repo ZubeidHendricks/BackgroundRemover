@@ -38,7 +38,8 @@ struct BackgroundRemoverService {
 
         let request = VNGenerateForegroundInstanceMaskRequest()
         let handler = VNImageRequestHandler(cgImage: cg, options: [:])
-        try handler.perform([request])
+        // Foreground masking needs the Neural Engine (unavailable on Simulator).
+        try? handler.perform([request])
         guard let result = request.results?.first else { throw BGError.noSubject }
         let maskBuffer = try result.generateScaledMaskForImage(forInstances: result.allInstances, from: handler)
         var mask = CIImage(cvPixelBuffer: maskBuffer)
